@@ -1,0 +1,9 @@
+
+# Kafka
+# when plaintext then no password is required.
+export KAFKA_SECURITY_PROTOCOL=PLAINTEXT
+export KAFKA_SASL_MECHANISMS=PLAIN
+export KAFKA_SASL_USERNAME=
+export KAFKA_SASL_PASSWORD=
+export KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+export KAFKA_SCHEMAREGISRY=http://localhost:9081

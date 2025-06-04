@@ -1,0 +1,16 @@
+    {
+        "ts" : 1729312551000,
+        "metadata" : {
+            "siteId" : 101,
+            "deviceId" : 1001,
+            "sensorId" : 10002,
+            "unit" : "Celcius",
+            "ts_human" : "2024-10-02T00:00:00.869Z",
+            "location": {
+                "latitude": -26.195246, 
+                "longitude": 28.034088
+            },
+            "deviceType" : "Oil Pump"
+        },
+        "measurement" : 75.37
+    }

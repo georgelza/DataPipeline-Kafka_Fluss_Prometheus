@@ -1,0 +1,24 @@
+# https://ambar-thecloudgarage.medium.com/remote-writes-with-kube-prometheus-3b4ad038d675
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+    - targets:
+        - prometheus:9090
+
+
+  - job_name: Pushgateway
+    honor_labels: true
+    honor_timestamps: true
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+    static_configs: 
+    # Note, remember when we are running in docker/docker compose you need to use the docker compose hostname/containername here
+    # you can't use localhost, as localhost refers to the prometheus internal itself.
+      - targets: ['pushgateway:9091', ]
