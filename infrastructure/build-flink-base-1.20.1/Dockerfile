@@ -9,9 +9,9 @@ RUN echo "--> Install some useful tools (openjdk-17-jdk-headless required on ARM
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 
-# https://github.com/apache/flink/tree/master/flink-python/pyflink/examples
-RUN echo "--> Install apache-flink && jupyter package" \
-    && /usr/bin/pip3 install apache-flink==1.20.1 jupyter
+# # https://github.com/apache/flink/tree/master/flink-python/pyflink/examples
+RUN echo "--> Install apache-flink" \
+    && /usr/bin/pip3 install apache-flink==1.20.1
 
 
 RUN echo "--> Cleanup time" \

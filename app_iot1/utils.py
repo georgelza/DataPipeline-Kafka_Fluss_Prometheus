@@ -9,6 +9,7 @@
 #   Description     :   
 #
 #   Created     	:   22 November 2024
+#                   :   06 June 2025    Added OpenMetrics Component/output ability.
 #
 #   Changelog       :   See bottom
 #
@@ -103,9 +104,12 @@ def configparams():
     config_params = {}
     
     # General
+
     config_params["CONSOLE_DEBUGLEVEL"] = int(os.environ["CONSOLE_DEBUGLEVEL"])
     config_params["FILE_DEBUGLEVEL"]    = int(os.environ["FILE_DEBUGLEVEL"])
     config_params["ECHOSEEDFILE"]       = int(os.environ["ECHOSEEDFILE"])
+
+    config_params["RUNHISTORIC"]        = int(os.environ["RUNHISTORIC"])
                 
     # Kafka
     config_params["BOOTSTRAP_SERVERS"]  = os.environ["KAFKA_BOOTSTRAP_SERVERS"]
@@ -122,7 +126,7 @@ def configparams():
     config_params["SITEIDS"]            = os.environ["SITEIDS"].split(",")
     
     # Root of file name 
-    config_params["LOGDIR"]             = "logs"
+    config_params["LOGDIR"]             = os.environ["LOGDIR"]
     config_params["LOGGINGFILE"]        = os.environ["LOGGINGFILE"]
     
     config_params["STRUCTMOD"]          = int(os.environ["STRUCTMOD"])
@@ -151,13 +155,15 @@ def echo_config(config_params, logger):
     logger.info("* Seedfile                          : " + config_params["SEEDFILE"])
     logger.info("* Echo Seed File                    : " + str(config_params["ECHOSEEDFILE"]))
     logger.info("* SiteId's                          : " + str(config_params["SITEIDS"]))
-
+    logger.info("* Run History ?                     : " + str(config_params["RUNHISTORIC"]))
+    
     logger.info("* Kafka Bootstrap server            : " + config_params["BOOTSTRAP_SERVERS"])
     logger.info("* Kafka topic                       : " + config_params["TOPIC"])
     logger.info("* Kafka mode                        : " + str(config_params["MODE"]))
     logger.info("* Kafka flush size                  : " + str(config_params["BATCH_SIZE"]))
 
-    logger.info("* Log Root                          : " + config_params["LOGDIR"])
+    logger.info("* Log Output Directory             : " + config_params["LOGDIR"])
+    logger.info("* Log Output File                   : " + config_params["LOGGINGFILE"])
     
     logger.info("* Run Modified payload (TS_Human)   : " + str(config_params["TSHUMAN"]))
     logger.info("* Run Modified payload (Location)   : " + str(config_params["STRUCTMOD"]))

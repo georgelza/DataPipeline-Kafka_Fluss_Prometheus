@@ -1,53 +1,52 @@
 
 
-SET 'parallelism.default' = '2';
-SET 'sql-client.verbose' = 'true';
+SET 'parallelism.default'    = '2';
+SET 'sql-client.verbose'     = 'true';
 SET 'execution.runtime-mode' = 'streaming';
 
--- insert into hive_catalog.prometheus.factory_iot_north select * from fluss_catalog.fluss.factory_iot_unnested where siteId='101';
--- insert into hive_catalog.prometheus.factory_iot_south select * from fluss_catalog.fluss.factory_iot_unnested where siteId='102';
--- insert into hive_catalog.prometheus.factory_iot_south select * from fluss_catalog.fluss.factory_iot_unnested where siteId='103';
 
 --- Push Data to Prometheus ---
 
-SET 'pipeline.name' = 'Push North metrics to factory_iot_north';
+SET 'pipeline.name' = 'Push North metrics to prometheus region_north';
 
-INSERT INTO hive_catalog.prometheus.factory_iot_north
-    (siteId, deviceId, sensorId, measurement, ts_wm)
+INSERT INTO hive_catalog.prometheus.region_north
+    (metric_name, siteId, deviceId, sensorId, measurement, ts)
 SELECT
-     CAST(siteId AS "VARCHAR")      AS siteId
-    ,CAST(deviceId AS "VARCHAR")    AS deviceId
-    ,CAST(sensorId AS "VARCHAR")    AS sensorId
-    ,measurement                    AS measurement
-    ,ts_wm                          AS ts_wm
+     CAST('sensor_reading' AS STRING)           AS metric_name
+    ,siteId                                     AS siteId
+    ,deviceId                                   AS deviceId
+    ,sensorId                                   AS sensorId
+    ,measurement                                AS measurement
+    ,TO_TIMESTAMP(FROM_UNIXTIME(ts / 1000))     AS ts
 FROM fluss_catalog.fluss.factory_iot_unnested
 WHERE siteId=101;
 
 
-SET 'pipeline.name' = 'Push South metrics to factory_iot_south';
+SET 'pipeline.name' = 'Push South metrics to prometheus region_south';
 
-INSERT INTO hive_catalog.prometheus.factory_iot_south
-    (siteId, deviceId, sensorId, measurement, ts_wm)
+INSERT INTO hive_catalog.prometheus.region_south
+    (metric_name, siteId, deviceId, sensorId, measurement, ts)
 SELECT
-     CAST(siteId AS "VARCHAR")      AS siteId
-    ,CAST(deviceId AS "VARCHAR")    AS deviceId
-    ,CAST(sensorId AS "VARCHAR")    AS sensorId
-    ,measurement                    AS measurement
-    ,ts_wm                          AS ts_wm
+     CAST('sensor_reading' AS STRING)           AS metric_name
+    ,siteId                                     AS siteId
+    ,deviceId                                   AS deviceId
+    ,sensorId                                   AS sensorId
+    ,measurement                                AS measurement
+    ,TO_TIMESTAMP(FROM_UNIXTIME(ts / 1000))     AS ts
 FROM fluss_catalog.fluss.factory_iot_unnested
 WHERE siteId=102;
 
 
-SET 'pipeline.name' = 'Push East metrics to factory_iot_east';
+SET 'pipeline.name' = 'Push East metrics to prometheus region_east';
 
-INSERT INTO hive_catalog.prometheus.factory_iot_east
-    (siteId, deviceId, sensorId, measurement, deviceType, ts_wm)
+INSERT INTO hive_catalog.prometheus.region_east
+    (metric_name, siteId, deviceId, sensorId, measurement, ts)
 SELECT
-     CAST(siteId AS "VARCHAR")      AS siteId
-    ,CAST(deviceId AS "VARCHAR")    AS deviceId
-    ,CAST(sensorId AS "VARCHAR")    AS sensorId
-    ,deviceType                     AS deviceType
-    ,measurement                    AS measurement
-    ,ts_wm                          AS ts_wm
+     CAST('sensor_reading' AS STRING)           AS metric_name
+    ,siteId                                     AS siteId
+    ,deviceId                                   AS deviceId
+    ,sensorId                                   AS sensorId
+    ,measurement                                AS measurement
+    ,TO_TIMESTAMP(FROM_UNIXTIME(ts / 1000))     AS ts
 FROM fluss_catalog.fluss.factory_iot_unnested
 WHERE siteId=103;

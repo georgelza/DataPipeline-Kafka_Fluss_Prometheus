@@ -1,8 +1,8 @@
 .DEFAULT_GOAL := help
 include ../.env
 
-IMAGE_NAME=ubuntu20.04-openjdk11
-VERSION=1.0.0
+IMAGE_NAME=ubuntu24.04-openjdk11
+VERSION=24.04
 
 define HELP
 
@@ -18,4 +18,4 @@ help:
 .PHONY: help
 
 build:  
-	sudo docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/${IMAGE_NAME}:${VERSION} .
+	docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/${IMAGE_NAME}:${VERSION} .

@@ -30,15 +30,14 @@ help:
 
 pullall: os flink fluss db prometheus grafana pushgateway misc hadoop hive hdfs 
 
-buildall: buildos buildopenjdk8 buildopenjdk11 buildhive buildflinkbase buildflussbase buildhdfs builddb
+buildall: buildos buildopenjdk8 buildopenjdk11 buildhive buildflinkbase buildhdfs builddb
 
 
 # Base images used along the way, used to build 2nd level images.
 # arm64/v8 used as base for all images except the app/*.
 os: 
 	docker pull arm64v8/ubuntu:24.04
-
-
+	
 flink:
 	docker pull flink:1.20.1-scala_2.12-java17
 
@@ -52,12 +51,11 @@ prometheus:
 	docker pull prom/prometheus:v3.3.0
 grafana:
 	docker pull grafana/grafana:11.6.1
-pushgateway:
-	docker pull prom/pushgateway:v1.11.0
 
 misc:
 	docker pull python:3.13-bookworm
 
+# Base for hive server
 hadoop:
 	cd build-hive-openjdk8/basehadoop; mkdir stage; cd stage; wget https://downloads.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5-aarch64.tar.gz
 
@@ -68,10 +66,12 @@ hive:
 	cd build-hive-openjdk8/basehive; cd stage; wget http://www.congiu.net/hive-json-serde/1.3.8/cdh5/json-serde-1.3.8-jar-with-dependencies.jar 
 	cd build-hive-openjdk8/basehive; cd stage; wget https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
 
-
+# base for hdfs cluster
 hdfs:
-	cd build-hdfs-openjdk11/; mkdir stage; cd  stage; wget https://downloads.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5-aarch64.tar.gz
+	cd build-hdfs-openjdk11/base/; mkdir stage; cd  stage; wget https://downloads.apache.org/hadoop/common/hadoop-3.3.5/hadoop-3.3.5-aarch64.tar.gz
 
+
+###### Build Section ######
 
 # Build a base Ubuntu 20.04 OS
 buildos:
@@ -79,7 +79,7 @@ buildos:
 
 # Add Open JDK 8 & 17
 buildopenjdk8:
-	cd build-ubuntu-os-openjdk8; make build
+	cd ./build-ubuntu-os-openjdk8; make build
 
 buildopenjdk11:
 	cd build-ubuntu-os-openjdk11; make build
@@ -91,10 +91,6 @@ buildhive:
 # Base images with some add ons - Flink 1.20.1 - Java 17
 buildflinkbase:
 	cd build-flink-base-1.20.1; make build
-
-# Base image with some add ons - Probably to be used for Fluss 0.6.0 on the openjdk17
-buildflussbase:
-	cd build-fluss-0.6.0; make build
 
 buildhdfs:
 	cd build-hdfs-openjdk11; make buildbase

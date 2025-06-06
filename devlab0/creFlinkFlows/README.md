@@ -6,7 +6,7 @@
     Will create the Hive & Fluss catalog.
 
     - hive_catalog
-    - iot database inside hive_catalog
+    - kafka database inside hive_catalog
     - prometheus database inside hive_catalog
     - fluss_catalog, we will use `fluss` as our default database.
 
@@ -14,19 +14,23 @@
 
     - ....
 
-3.  2.1.creKafkaSource.sql
+3. 2.1.creKafkaSource.sql
 
     - ...
   
-4.  2.2.creFlussTarget.sql
+4. 2.2.creFlussTarget.sql
 
     ...
 
-5. 2.3.crePromTargets.sq
+5. 2.3.crePromTargets.sql
 
    ...
 
-6. 3.0.crePromInserts.sq.
+6. 3.0.creCurlPromPublish.bsh
+   
+   ...
+   
+7. 3.0.crePromInserts.sql
 
   ...
 
@@ -34,7 +38,7 @@
 
   ...
 
-8. 3.3crePromInserts.sql
+8. 3.3.crePromInserts.sql
 
   ...
 

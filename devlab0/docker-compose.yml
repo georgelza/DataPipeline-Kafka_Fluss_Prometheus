@@ -20,6 +20,7 @@ configs:
     file: ./conf/log4j-console.properties
   log4j-session:
     file: ./conf/log4j-session.properties
+
   postgres_conf:
     file: ./conf/postgresql.conf
   postgres_hba:
@@ -96,7 +97,7 @@ services:
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
-      
+
   # end Clonfluent cluster
 
 
@@ -109,8 +110,8 @@ services:
     image: fluss/fluss:0.6.0
     container_name: coordinator-server
     hostname: coordinator-server
-    ports:
-      - 9123:9123
+    # ports:
+    #   - 9123:9123
     depends_on:
       - zookeeper
     environment:
@@ -220,7 +221,6 @@ services:
     container_name: jobmanager
     ports:
       - 8083:8081
-      - 8888:8888   # Jupyter notebook
     environment:
       - env.log.level=DEBUG
 
@@ -378,6 +378,8 @@ services:
     image: prom/prometheus:v3.3.0
     hostname: prometheus
     container_name: prometheus
+    environment:
+      - TZ=Africa/Johannesburg
     volumes:
       - ./data/prometheus:/data
     configs:
@@ -389,15 +391,6 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--web.enable-remote-write-receiver"
       - "--storage.tsdb.path=/data"
-
-  pushgateway:
-    image: prom/pushgateway:v1.11.0
-    hostname: pushgateway
-    container_name: pushgateway
-    volumes:
-      - ./data/pushgateway:/data
-    ports:
-      - 9091:9091
 
   grafana:
     image: grafana/grafana:11.6.1

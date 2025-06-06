@@ -1,93 +1,26 @@
 
 -- https://github.com/apache/flink-connector-prometheus/pull/22
 
+-- when the project writes up some docs... it needs to be highlighted that remote write is used...
+-- and that you need to pass  - "--web.enable-remote-write-receiver" as part of the start command and that the write destination for the table is this url..
+-- oh and then, this one got me... check prometheus server time vs your writers time... my case my server was running utc and my code as local which os +2... so the server rejected the writes as being to far into the future.
+
+-- The metric_name column will contain the well, the name of the metric... in the below case "sensor_readings"
+-- followed by pretty much the labels for the sensor_reading... this structure is really elegant in that you can one single
+-- table for all our prometheus metrics.
 
 CREATE TABLE hive_catalog.prometheus.Promtest (
-   `sensorId`       STRING,
-   `siteId`         STRING,
-   `deviceId`       STRING,
-   `measurement`    BIGINT,
-   `ts_wm`          TIMESTAMP(3)
+    `metric_name`          STRING
+   ,`sensorId`             INT
+   ,`siteId`               INT
+   ,`deviceId`             INT
+   ,`measurement`          DOUBLE
+   ,`ts`                   TIMESTAMP(3)
 ) WITH (
    'connector'               = 'prometheus',
-   'metric.endpoint-url'     = 'http://pushgateway:9091/metrics/job/PromTest/instance/North',
-   'metric.name'             = 'sensorId',
-   'metric.label.keys'       = '[siteId,deviceId,sensorId]',
+   'metric.endpoint-url'     = 'http://prometheus:9090/api/v1/write',
+   'metric.name'             = 'metric_name',
+   'metric.label.keys'       = '[sensorId,siteId,deviceId]',
    'metric.sample.key'       = 'measurement',
-   'metric.sample.timestamp' = 'ts_wm'
+   'metric.sample.timestamp' = 'ts'
 );
-
-
-
--- Direct Curl testing of pushgateway
---
--- cat <<EOF | curl --data-binary @- http://127.0.0.1:9091/metrics/job/Promtest/instance/North
---   # TYPE sensor_reading counter
---   sensor_reading{siteId="101", deviceId="1031", sensorId="10222"} 5
---   # TYPE sensorId gauge
---   sensorId{siteId="101", deviceId="1031", sensorId="10221"} 41
---   # TYPE another_metric gauge
---   # HELP another_metric Just an example.
---   another_metric{deviceId="1031", sensorId="10521"} 2398.283
--- EOF
-
-
--- cat <<EOF | curl --data-binary @- http://127.0.0.1:9091/metrics/job/Promtest/instance/North
---   # TYPE sensor_reading counter
---   sensor_reading{siteId="101", deviceId="1031", sensorId="10222"} 6
---   # TYPE sensorId gauge
---   sensorId{siteId="101", deviceId="1031", sensorId="10221"} 42
---   # TYPE another_metric gauge
---   # HELP another_metric Just an example.
---   another_metric{deviceId="1031", sensorId="10521"} 2394.283
--- EOF
-
--- cat <<EOF | curl --data-binary @- http://127.0.0.1:9091/metrics/job/Promtest/instance/North
---   # TYPE sensor_reading counter
---   sensor_reading{siteId="101", deviceId="1031", sensorId="10222"} 9
---   # TYPE sensorId gauge
---   sensorId{siteId="101", deviceId="1031", sensorId="10221"} 43
---   # TYPE another_metric gauge
---   # HELP another_metric Just an example.
---   another_metric{deviceId="1031", sensorId="10521"} 2395.283
--- EOF
-
--- cat <<EOF | curl --data-binary @- http://127.0.0.1:9091/metrics/job/Promtest/instance/North
---   # TYPE sensor_reading counter
---   sensor_reading{siteId="101", deviceId="1031", sensorId="10222"} 12
---   # TYPE sensorId gauge
---   sensorId{siteId="101", deviceId="1031", sensorId="10221"} 45
---   # TYPE another_metric gauge
---   # HELP another_metric Just an example.
---   another_metric{deviceId="1031", sensorId="10521"} 2393.283
--- EOF
-
--- cat <<EOF | curl --data-binary @- http://127.0.0.1:9091/metrics/job/Promtest/instance/North
---   # TYPE sensor_reading counter
---   sensor_reading{siteId="101", deviceId="1031", sensorId="10222"} 14
---   # TYPE sensorId gauge
---   sensorId{siteId="101", deviceId="1031", sensorId="10221"} 44
---   # TYPE another_metric gauge
---   # HELP another_metric Just an example.
---   another_metric{deviceId="1031", sensorId="10521"} 2397.283
--- EOF
-
--- cat <<EOF | curl --data-binary @- http://127.0.0.1:9091/metrics/job/Promtest/instance/North
---   # TYPE sensor_reading counter
---   sensor_reading{siteId="101", deviceId="1031", sensorId="10222"} 15
---   # TYPE sensorId gauge
---   sensorId{siteId="101", deviceId="1031", sensorId="10221"} 43
---   # TYPE another_metric gauge
---   # HELP another_metric Just an example.
---   another_metric{deviceId="1031", sensorId="10521"} 2395.283
--- EOF
-
--- cat <<EOF | curl --data-binary @- http://127.0.0.1:9091/metrics/job/Promtest/instance/North
---   # TYPE sensor_reading counter
---   sensor_reading{siteId="101", deviceId="1031", sensorId="10222"} 16
---   # TYPE sensorId gauge
---   sensorId{siteId="101", deviceId="1031", sensorId="10221"} 40
---   # TYPE another_metric gauge
---   # HELP another_metric Just an example.
---   another_metric{deviceId="1031", sensorId="10521"} 2394.283
--- EOF

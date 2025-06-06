@@ -6,7 +6,7 @@ HADOOP_VERSION=3.3.5-java11
 
 define HELP
 
-Based on Ubuntu 20.04 / OpenJDK 11 / Apache Hadoop 3.3.8
+Based on Ubuntu 24.04 / OpenJDK 11 / Apache Hadoop 3.3.8
 
 Available commands:
 
@@ -40,15 +40,15 @@ wget: clean
 clean:
 	cd base; cd stage; rm *
 
-buildbase: wget
-	sudo docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-base-$(HADOOP_VERSION):$(VERSION) ./base
+buildbase: 
+	docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-base-$(HADOOP_VERSION):$(VERSION) ./base
 
 build: buildbase
-	sudo docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-namenode-$(HADOOP_VERSION):$(VERSION) ./namenode
-	sudo docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-datanode-$(HADOOP_VERSION):$(VERSION) ./datanode
-	sudo docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-resourcemanager-$(HADOOP_VERSION):$(VERSION) ./resourcemanager
-	sudo docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-nodemanager-$(HADOOP_VERSION):$(VERSION) ./nodemanager
-	sudo docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-historyserver-$(HADOOP_VERSION):$(VERSION) ./historyserver
+	docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-namenode-$(HADOOP_VERSION):$(VERSION) ./namenode
+	docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-datanode-$(HADOOP_VERSION):$(VERSION) ./datanode
+	docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-resourcemanager-$(HADOOP_VERSION):$(VERSION) ./resourcemanager
+	docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-nodemanager-$(HADOOP_VERSION):$(VERSION) ./nodemanager
+	docker build --build-arg REPO_NAME=${REPO_NAME} -t ${REPO_NAME}/hadoop-historyserver-$(HADOOP_VERSION):$(VERSION) ./historyserver
 
 run:
 	docker compose -p devlab up -d

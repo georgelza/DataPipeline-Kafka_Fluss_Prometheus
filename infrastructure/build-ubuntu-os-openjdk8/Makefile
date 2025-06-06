@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 include ../.env
 
-IMAGE_NAME=ubuntu-openjdk8
+IMAGE_NAME=ubuntu24.04-openjdk8
 VERSION=24.04
 
 define HELP

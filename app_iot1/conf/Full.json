@@ -8,7 +8,7 @@
     "location": {"latitude": -26.2056, "longitude": 28.0337},
     "time_zone": "+2:00",
     "historic_data_start_datetime": "2024-10-15T08:00",
-    "reccap": 300,
+    "reccap": 99999999999999999999999999999999999,
     "flush_size": 150,
     "sleeptime": 5000,
     "devices": [

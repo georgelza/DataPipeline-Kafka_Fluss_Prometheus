@@ -10,6 +10,7 @@
 #
 #   Original Created   	:   22 November 2024
 #   Modified            :   12 April 2025
+#                       :   06 June 2025    Added OpenMetrics Component/output ability.
 #
 #   Changelog           :   Modified from original from previous blog that posted to Mongo and 2nd Previus posted to Kafka
 #                       :   to now to post to
@@ -294,12 +295,12 @@ def run_simulation(site, current_time, config_params):
     flush_size  = config_params["BATCH_SIZE"]
     
     if flush_size > 0:
-        mode        = 1         # save Many
-        payloadset  = []
+        mode            = 1         # save Many
+        payloadset      = []
         
     else:
-        mode    = 0          # save One
-        payload = None
+        mode            = 0         # save One
+        payload         = None
         
     #end if
     
@@ -333,91 +334,100 @@ def run_simulation(site, current_time, config_params):
         
     # end if
 
-                  
+                 
     connection_saver    = connection.createKafkaProducer(config_params, site["siteId"], logger)      
     if connection_saver == -1:
         logger.critical(f"SiteId: {str(site["siteId"])} - run_simulation.connection.createKafkaProducer Failed, exiting.")
         sys.exit(1)
                                 
     # end if
-    
-        
+
     historical_record_counter   = 0             # Keep track of how many historical records are created.
     current_record_counter      = 0             # Keep track of how many current records was created.
     total_record_counter        = 0             # sum of above 2
-    batch_flush_counter         = 0             # batch incrementer/counter.
-            
-    # Historical phase
-    if "historic_data_start_datetime" in site and site["historic_data_start_datetime"]:
-
-        step1starttime  = datetime.now()
-        step1start      = perf_counter()
-            
-        logger.info("simulate.run_simulation - Execute Historical Phase,   Starting from {historic_data_start_datetime}".format(
-            historic_data_start_datetime = site["historic_data_start_datetime"]
-        ))
-    
-        
-        while oldest_time < current_time:
-            oldest_time += timedelta(milliseconds=site["sleeptime"])    
- 
-            # chec if we're specified a start end day for day
-            if run_limited_time:
-                # yes, so now check if current time is inside/outside, if outsice then we skip via continue call
-                if not is_within_time_range(operational_start_time, operational_end_time, oldest_time):
-                    continue
+    batch_flush_counter         = 0             # batch incrementer/counter.    
+    if config_params["RUNHISTORIC"] == 1:
                 
-                    print("Skipping record outside time range, this should never happen/print")
-                # end if
-            # end if
+        # Historical phase
+        if "historic_data_start_datetime" in site and site["historic_data_start_datetime"]:
+
+            step1starttime  = datetime.now()
+            step1start      = perf_counter()
+                
+            logger.info("simulate.run_simulation - Execute Historical Phase,   Starting from {historic_data_start_datetime}".format(
+                historic_data_start_datetime = site["historic_data_start_datetime"]
+            ))
             
-            for device in site["devices"]:
-                for sensor in device["sensors"]:
-                    
-                    payload = generate_payload(logger, site, device, sensor, oldest_time, site_time_zone, config_params)
-                    
-                    sensor["last_value"] = payload["measurement"]
-
-                    historical_record_counter   += 1
-                    total_record_counter        += 1
-                    
-                    # batch posting
-                    if mode == 1:             
-                        batch_flush_counter += 1
-                        payloadset.append(payload)
- 
-                        if batch_flush_counter == flush_size:
-                            result              = connection.postToKafka(connection_saver, site["siteId"], mode, payloadset, topic, logger)
-                            batch_flush_counter = 0
-                            payloadset          = []
-
-                    #single record posting.
-                    else:
-                       result  = connection.postToKafka(connection_saver, site["siteId"], mode, payload, topic, logger)
-                        
-                    #end if                   
-                # end for
-            # end for
+            # Do we want to output the record to a OpenMetrics Historical file
+            if config_params["OPENMETRICSENABLED"] == 1:
+                # Lets open the file
+                openmetricsfile = connection.createFileConnection(config_params, str(site["siteId"]), logger)
             
-            oldest_time += timedelta(milliseconds=site["sleeptime"])
-
-        # end while
-        
-        logger.info("simulate.run_simulation - COMPLETED Historical Phase, Started from {historic_data_start_datetime}, Created {historical_record_counter} records".format(
-            historic_data_start_datetime = site["historic_data_start_datetime"],
-            historical_record_counter    = historical_record_counter
-        ))     
-
-        step1endtime = datetime.now()
-        step1end     = perf_counter()
-        step1time    = step1end - step1start  
-        histrate     = str( round(historical_record_counter/step1time, 2))
-
-    # end Historical phase
+            #end if
+            
+            while oldest_time < current_time:
+                oldest_time += timedelta(milliseconds=site["sleeptime"])    
     
+                # chec if we're specified a start end day for day
+                if run_limited_time:
+                    # yes, so now check if current time is inside/outside, if outsice then we skip via continue call
+                    if not is_within_time_range(operational_start_time, operational_end_time, oldest_time):
+                        continue
+                    
+                        print("Skipping record outside time range, this should never happen/print")
+                    # end if
+                # end if
+                
+                for device in site["devices"]:
+                    for sensor in device["sensors"]:
+                        
+                        payload = generate_payload(logger, site, device, sensor, oldest_time, site_time_zone, config_params)
+
+                        sensor["last_value"] = payload["measurement"]
+
+                        historical_record_counter   += 1
+                        total_record_counter        += 1
+                        
+                        # batch posting
+                        if mode == 1:             
+                            batch_flush_counter += 1
+                            payloadset.append(payload)
+    
+                            if batch_flush_counter == flush_size:
+                                kafka_result  = connection.postToKafka(connection_saver, site["siteId"], mode, payloadset, topic, logger)
+                        
+                                batch_flush_counter = 0
+                                payloadset          = []
+
+                        #single record posting.
+                        else:
+                            kafka_result  = connection.postToKafka(connection_saver, site["siteId"], mode, payload, topic, logger)
+                            if config_params["OPENMETRICSENABLED"] == 1:
+                                file_result = connection.writeToFile(openmetricsfile, site["siteId"], mode, payloadhist, logger)
+                                
+                            #end if
+                        #end if                   
+                    # end for
+                # end for
+                
+                oldest_time += timedelta(milliseconds=site["sleeptime"])
+
+            # end while
+            
+            logger.info("simulate.run_simulation - COMPLETED Historical Phase, Started from {historic_data_start_datetime}, Created {historical_record_counter} records".format(
+                historic_data_start_datetime = site["historic_data_start_datetime"],
+                historical_record_counter    = historical_record_counter
+            ))     
+
+            step1endtime = datetime.now()
+            step1end     = perf_counter()
+            step1time    = step1end - step1start  
+            histrate     = str( round(historical_record_counter/step1time, 2))
+
+        # end Historical phase
+    #end if 
     
     # Current phase  
-    
     current_record_counter  = 0
     batch_flush_counter     = 0
     payloadset              = []
@@ -443,7 +453,7 @@ def run_simulation(site, current_time, config_params):
             for device in site["devices"]:
                 for sensor in device["sensors"]:
     
-                    payload = generate_payload(site, device, sensor, current_loop_time, site_time_zone, config_params)
+                    payload = generate_payload(logger, site, device, sensor, current_loop_time, site_time_zone, config_params)
 
                     sensor["last_value"] = payload["measurement"]
 
@@ -486,15 +496,17 @@ def run_simulation(site, current_time, config_params):
 
 
     # Historical phase stats
-    if "historic_data_start_datetime" in site and site["historic_data_start_datetime"]:
-        logger.info("simulate.run_simulation - Historical Record Process Stats - St: {start}, Et: {end}, Rt: {runtime}, Recs: {historical_record_counter} docs, Rate: {histrate} docs/s".format(
-            start                     = str(step1starttime.strftime("%Y-%m-%d %H:%M:%S.%f")),
-            end                       = str(step1endtime.strftime("%Y-%m-%d %H:%M:%S.%f")),
-            runtime                   = str(round(step1time, 4)),
-            historical_record_counter = historical_record_counter,
-            histrate                  = histrate
-        ))
-    # end if
+    if config_params["RUNHISTORIC"] == 1:
+        if "historic_data_start_datetime" in site and site["historic_data_start_datetime"]:
+            logger.info("simulate.run_simulation - Historical Record Process Stats - St: {start}, Et: {end}, Rt: {runtime}, Recs: {historical_record_counter} docs, Rate: {histrate} docs/s".format(
+                start                     = str(step1starttime.strftime("%Y-%m-%d %H:%M:%S.%f")),
+                end                       = str(step1endtime.strftime("%Y-%m-%d %H:%M:%S.%f")),
+                runtime                   = str(round(step1time, 4)),
+                historical_record_counter = historical_record_counter,
+                histrate                  = histrate
+            ))
+        # end if
+    #end if 
     
     # Current phase stats
     if site["reccap"] > 0: 
@@ -506,13 +518,22 @@ def run_simulation(site, current_time, config_params):
             currate                = currate
         ))
     # end if
-    
-    # Final stats
-    logger.info("simulate.run_simulation - COMPLETED Simulation       - Records: {historical_record_counter} + {current_record_counter} = {total_record_counter} records".format(
-        historical_record_counter = historical_record_counter,
-        current_record_counter    = current_record_counter,
-        total_record_counter      = total_record_counter
-    ))
 
+
+    # Final stats
+    if config_params["RUNHISTORIC"] == 1: 
+        logger.info("simulate.run_simulation - COMPLETED Simulation            - Records: {historical_record_counter} + {current_record_counter} = {total_record_counter} records".format(
+            historical_record_counter = historical_record_counter,
+            current_record_counter    = current_record_counter,
+            total_record_counter      = total_record_counter
+        ))
+        
+    else:
+        logger.info("simulate.run_simulation - COMPLETED Simulation            - Records: {total_record_counter} records".format(
+            total_record_counter = total_record_counter
+        ))
+    
+    #end if
+    
     sys.exit(0)
 # end run_simulation

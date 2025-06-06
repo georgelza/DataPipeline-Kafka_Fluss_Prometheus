@@ -1,12 +1,11 @@
-
--- Flus table with flattened data from North, South and East tables.
+-- Fluss table with flattened data from North, South and East tables.
 CREATE OR REPLACE TABLE fluss_catalog.fluss.factory_iot_unnested (
      ts                 BIGINT
     ,siteId             INTEGER
     ,deviceId           INTEGER
     ,sensorId           INTEGER
     ,unit               STRING
-    ,ts_human           TIMESTAMP(3)
+    ,ts_human           STRING
     ,longitude          DOUBLE
     ,latitude           DOUBLE
     ,deviceType         STRING
@@ -23,6 +22,12 @@ CREATE OR REPLACE TABLE fluss_catalog.fluss.factory_iot_unnested (
 
 
 
+
+
+
+
+
+ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202204');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202205');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202206');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202207');
@@ -31,7 +36,6 @@ ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_mo
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202210');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202211');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202212');
-
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202301');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202302');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202303');
@@ -44,7 +48,6 @@ ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_mo
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202310');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202311');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202312');
-
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202401');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202402');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202403');
@@ -57,10 +60,12 @@ ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_mo
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202410');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202411');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202412');
-
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202501');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202502');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202503');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202504');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202505');
 ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202506');
+ALTER TABLE fluss_catalog.fluss.factory_iot_unnested ADD PARTITION (partition_month = '202507');
+
+SHOW PARTITIONS fluss_catalog.fluss.factory_iot_unnested;

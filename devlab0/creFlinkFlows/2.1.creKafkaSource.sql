@@ -2,7 +2,7 @@
 
 --- Create source Flink Table's sourced via Flink source connector
 
-CREATE OR REPLACE TABLE hive_catalog.iot.factory_iot_north (
+CREATE OR REPLACE TABLE hive_catalog.kafka.factory_iot_north (
      ts              BIGINT
     ,metadata        ROW<
          siteId          INTEGER
@@ -31,7 +31,7 @@ CREATE OR REPLACE TABLE hive_catalog.iot.factory_iot_north (
 );
 
 
-CREATE TABLE hive_catalog.iot.factory_iot_south (
+CREATE TABLE hive_catalog.kafka.factory_iot_south (
      ts              BIGINT
     ,metadata        ROW<
          siteId          INTEGER
@@ -59,7 +59,7 @@ CREATE TABLE hive_catalog.iot.factory_iot_south (
 );
 
 
-CREATE TABLE hive_catalog.iot.factory_iot_east (
+CREATE TABLE hive_catalog.kafka.factory_iot_east (
      ts              BIGINT
     ,metadata        ROW<
          siteId          INTEGER

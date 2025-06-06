@@ -1,49 +1,50 @@
 
 -- https://github.com/apache/flink-connector-prometheus/pull/22
 
-
-CREATE TABLE hive_catalog.prometheus.factory_iot_north (
-    `sensorId`       STRING
-   ,`siteId`         STRING
-   ,`deviceId`       STRING
-   ,`measurement`    BIGINT
-   ,`ts_wm`          TIMESTAMP(3)
+CREATE TABLE hive_catalog.prometheus.region_north (
+    `metric_name`          STRING
+   ,`sensorId`             INT
+   ,`siteId`               INT
+   ,`deviceId`             INT
+   ,`measurement`          DOUBLE
+   ,`ts`                   TIMESTAMP(3)
 ) WITH (
-   'connector'               = 'prometheus',
-   'metric.endpoint-url'     = 'http://pushgateway:9091/metrics/job/factory_iot/instance/North',
-   'metric.name'             = 'sensorId',
-   'metric.label.keys'       = '[siteId,deviceId,sensorId]',
-   'metric.sample.key'       = 'measurement',
-   'metric.sample.timestamp' = 'ts_wm'
+    'connector'               = 'prometheus'
+   ,'metric.endpoint-url'     = 'http://prometheus:9090/api/v1/write'
+   ,'metric.name'             = 'metric_name'
+   ,'metric.label.keys'       = '[sensorId,siteId,deviceId]'
+   ,'metric.sample.key'       = 'measurement'
+   ,'metric.sample.timestamp' = 'ts'
 );
 
-CREATE TABLE hive_catalog.prometheus.factory_iot_south (
-    `sensorId`       STRING
-   ,`siteId`         STRING
-   ,`deviceId`       STRING
-   ,`measurement`    BIGINT
-   ,`ts_wm`          TIMESTAMP(3)
+CREATE TABLE hive_catalog.prometheus.region_south (
+    `metric_name`          STRING
+   ,`sensorId`             INT
+   ,`siteId`               INT
+   ,`deviceId`             INT
+   ,`measurement`          DOUBLE
+   ,`ts`                   TIMESTAMP(3)
 ) WITH (
-   'connector'               = 'prometheus',
-   'metric.endpoint-url'     = 'http://pushgateway:9091/metrics/job/factory_iot/instance/South',
-   'metric.name'             = 'sensorId',
-   'metric.label.keys'       = '[siteId,deviceId,sensorId]',
-   'metric.sample.key'       = 'measurement',
-   'metric.sample.timestamp' = 'ts_wm'
+    'connector'               = 'prometheus'
+   ,'metric.endpoint-url'     = 'http://prometheus:9090/api/v1/write'
+   ,'metric.name'             = 'metric_name'
+   ,'metric.label.keys'       = '[sensorId,siteId,deviceId]'
+   ,'metric.sample.key'       = 'measurement'
+   ,'metric.sample.timestamp' = 'ts'
 );
 
-CREATE TABLE hive_catalog.prometheus.factory_iot_east (
-    `sensorId`       STRING
-   ,`siteId`         STRING
-   ,`deviceId`       STRING
-   ,`deviceType`     STRING
-   ,`measurement`    BIGINT
-   ,`ts_wm`          TIMESTAMP(3)
+CREATE TABLE hive_catalog.prometheus.region_east (
+    `metric_name`          STRING
+   ,`sensorId`             INT
+   ,`siteId`               INT
+   ,`deviceId`             INT
+   ,`measurement`          DOUBLE
+   ,`ts`                   TIMESTAMP(3)
 ) WITH (
-   'connector'               = 'prometheus',
-   'metric.endpoint-url'     = 'http://pushgateway:9091/metrics/job/factory_iot/instance/East',
-   'metric.name'             = 'sensorId',
-   'metric.label.keys'       = '[siteId,deviceId,sensorId]',
-   'metric.sample.key'       = 'measurement',
-   'metric.sample.timestamp' = 'ts_wm'
+    'connector'               = 'prometheus'
+   ,'metric.endpoint-url'     = 'http://prometheus:9090/api/v1/write'
+   ,'metric.name'             = 'metric_name'
+   ,'metric.label.keys'       = '[sensorId,siteId,deviceId]'
+   ,'metric.sample.key'       = 'measurement'
+   ,'metric.sample.timestamp' = 'ts'
 );

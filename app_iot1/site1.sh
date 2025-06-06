@@ -2,8 +2,8 @@
 
 . ./.pws
 
-########################################################################
-# Golang  Examples : https://developer.confluent.io/get-started/go/
+# Do we want to run the historic loop.
+export RUNHISTORIC=0
 
 ### Confluent Cloud Cluster  -> see .pws
 export KAFKA_TOPIC_NAME=factory_iot_north

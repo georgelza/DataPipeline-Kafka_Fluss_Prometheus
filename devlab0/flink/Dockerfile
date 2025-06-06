@@ -11,11 +11,9 @@ RUN mkdir -p /opt/flink/conf/
 RUN mkdir -p /opt/flink/checkpoints
 RUN mkdir -p /opt/flink/rocksdb
 RUN mkdir -p /opt/sql-client/conf/
+
 RUN chown -R flink:flink /opt/flink
 RUN chown -R flink:flink /opt/sql-client
-
-USER flink:flink
-
 
 RUN echo "--> Install JARs: Flink's S3 plugin" && \
     mkdir ./plugins/s3-fs-hadoop && \
@@ -30,4 +28,4 @@ RUN chown -R flink:flink /opt/flink
 
 CMD ./bin/start-cluster.sh && sleep infinity
 
-EXPOSE 8888
+USER flink:flink

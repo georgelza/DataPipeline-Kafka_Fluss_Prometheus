@@ -2,6 +2,8 @@
 
 Work in Progress... NOT COMPLETE.
 
+GIT: https://github.com/georgelza/DataPipeline-Kafka_Fluss_Prometheus
+
 ## Overview
 
 This originally started as a simple idea, create a IoT JSON packaged payload, publish it to a **Confluent Kafka Broker**, consume using a connector into Flink and,do some fancy aggregation and then sink the aggregated numbers down into Prometheus, and visualizeusing Grafana.
@@ -34,26 +36,25 @@ See below for version information.
 
 ## Modules and Versions
 
+- Ubuntu 24.04 LTS
 
-- Confluent Kafka Cluster.
+- Confluent Kafka Cluster 7.9.1
   
 - Apache Flink 1.20.1 - Java 17
 
-- Apache Fluss 0.6.0
+- Apache Fluss 0.6.0  (With Zookeeper 3.9.2)
 
-- Hadoop File System (HDFS) 3.3.5 build (OpenJDK11) on Ubuntu 20.04 LTS
-
-- Ubuntu 24.04 LTS
+- Hadoop File System (HDFS) 3.3.5 build (OpenJDK11) on Ubuntu 24.04 LTS
 
 - Hive Metastore 3.1.3 on Hadoop 3.3.5 (OpenJDK8) on Ubuntu 24.04 LTS
 
 - PostgreSQL 12
 
-- Python 3.12
+- Python 3.13
 
-- Prometheus
+- Prometheus v3.3.0
   
-- Grafana
+- Grafana 11.6.1
 
 
 ## Our various IoT Payloads formats.
@@ -121,7 +122,7 @@ See below for version information.
 
 0. devlab#/docker_compose.yml
 
-1. .pwd in app_mqttiot# in siteX.sh
+1. .pwd in app_iot# in siteX.sh
 
 2. devlab#/.env
 
@@ -140,7 +141,7 @@ See below for version information.
 
 ### Build various containers
 
-1. cd devlab#
+1. cd devlab0
 
 2. ./getlibs.sh
 
@@ -234,13 +235,6 @@ The various files are downloaded by executing the `getlibs.sh` file located in t
 
 - [Using RocksDB State Backend in Apache Flink: When and How](https://flink.apache.org/2021/01/18/using-rocksdb-state-backend-in-apache-flink-when-and-how/)
 
-
-### DuckDB
-
-- [Can hashtag#duckdb revolutionize the data lake experience?](https://www.linkedin.com/posts/mehd-io_duckdb-activity-7265743807625723905-_OO4/?utm_source=share&utm_medium=member_desktop)
-
-
-- [Youtube: Can DuckDB revolutionize the data lake experience?](https://www.youtube.com/watch?v=CDzqDpCNjiY&feature=youtu.be)
 
 
 ### Log4J Logging levels

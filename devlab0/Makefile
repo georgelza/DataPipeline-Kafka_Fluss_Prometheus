@@ -38,7 +38,7 @@ help:
 
 
 buildapp:
-	cd ../app_mqttiot1; make build
+	cd ../app_iot1; make build
 
 #	docker rmi $(docker images -q --filter "dangling=true")
 
@@ -48,14 +48,13 @@ run:
 		postgres metastore hiveserver2 \
 		jobmanager taskmanager \
 		zookeeper coordinator-server tablet-server-0 tablet-server-1 tablet-server-2 \
-		prometheus grafana pushgateway \
+		prometheus grafana  \
 		 --remove-orphans 
 #		namenode resourcemanager historyserver nodemanager1 datanode1 datanode2 datanode3 datanode4 datanode5 \
-#		minio mc
+#		minio mc 
  
-deploy: createtopics createcat source targets
+deploy: createtopics createcat source targets inserts
 
-# inserts
 
 createtopics:
 	./creTopics/creTopics.sh
@@ -64,7 +63,6 @@ createcat:
 	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/1.0.creCat.sql
 
 source:
-	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/2.0.crePromSource.sql
 	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/2.1.creKafkaSource.sql
 
 targets:
@@ -72,9 +70,18 @@ targets:
 	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/2.3.crePromTargets.sql
 
 inserts:
-#	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/3.0.crePromInserts.sql
 	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/3.2.creFlussInserts.sql
-#	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/3.3.crePromInserts.sql
+	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/3.3.crePromInserts.sql
+
+
+# test stack. to use this make sure the date/time from 3.0.crePromInserts.sql is recent, like
+# last couple of minutes
+# note the prometheus server runs at UTC time so these record times need to align with UTC.
+testcre:
+	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/2.0.crePromSource.sql
+
+tstinsert:
+	docker compose exec jobmanager /opt/flink/bin/sql-client.sh -f /sql/3.0.crePromInserts.sql
 
 
 # The below require the HDFS stack to be working... commented out currently above.
@@ -116,11 +123,9 @@ down:
 	cd data/; rm -rf confluent.d
 	cd data/; rm -rf flink
 	cd data/; rm -rf fluss
-	cd data/; rm -rf grafana
 	cd data/; rm -rf paimon
 	cd data/; rm -rf postgres
 	cd data/; rm -rf prometheus
-	cd data/; rm -rf pushgateway
 
 ps:
 	docker compose ps

@@ -8,6 +8,7 @@
 #	By              :   George Leonard ( georgelza@gmail.com )
 #
 #   Created     	:   28 Mar 2025
+#                   :   06 June 2025    Added OpenMetrics Component/output ability.
 #
 #   Notes       	:
 #
@@ -174,3 +175,92 @@ def delivery_callback(err, msg, logger):
     #end if
     
 #end acked
+
+""" 
+Lets create to write json strings to a file.
+This will be json structured flattened into a single line.
+"""
+def createFileConnection(filename, siteId, logger):
+    
+    file = None
+
+    try:
+        if filename != "": 
+            file = open(filename, 'a')  # Open the file in append mode
+            
+            if file != None:
+                logger.debug('connection.createFileConnection - Filename {filename} - {siteId} OPENED'.format(
+                    siteId   = siteId,
+                    filename = filename
+                ))   
+                return file
+
+            else:
+                return -1
+            
+            #end if            
+        # end if                                 
+                       
+    except IOError as err:
+        logger.critical('connection.createFileConnection - {siteId} - FAILED Err: {err} '.format(
+            siteId = siteId,
+            err    = err
+        ))
+        
+        return -1
+    
+    # end try
+# end createFileConnection
+
+def writeToFile(file, siteId, mode, payload, logger):
+
+    try:
+
+        if file:        
+            if mode == 0:
+                mode = "writeOne"
+                # Convert the payload dictionary to a JSON string
+                file.write(payload + '\n')  # Add a newline at the end
+
+            else:
+
+                mode = "writeMany"
+                for record in payload:
+                    # Convert each payload to a JSON string and write it to the file
+                    file.write(record + '\n')  # Write each payload on a new line
+                    
+            # end if
+                        
+            return 1
+   
+    except IOError as err:
+        logger.error('connection.writeToFile - {siteId} - mode {mode} - FAILED, Err: {err}'.format(
+            siteId = siteId,
+            mode   = mode,
+            err    = err
+        ))
+        
+        return -1
+
+    # end try
+# end writeToFile
+
+
+def closeFileConnection(file, siteId, logger):
+    
+    if file:
+        try:            
+            file.close()
+            logger.debug('connection.closeFileConnection - {siteId} CLOSED'.format(
+                siteId = siteId
+            ))
+            
+        except IOError as err:
+            logger.error('connection.closeFileConnection - {siteId} - FAILED, Err: {err}'.format(
+                siteId = siteId,
+                err    = err
+            ))
+                        
+        # end try
+    # endif
+# end close_file

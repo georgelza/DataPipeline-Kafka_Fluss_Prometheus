@@ -1,6 +1,6 @@
 ARG REPO_NAME="georgelza"
 
-FROM ${REPO_NAME}/ubuntu20.04-openjdk11:1.0.0
+FROM ${REPO_NAME}/ubuntu24.04-openjdk11:24.04
 
 USER root
 

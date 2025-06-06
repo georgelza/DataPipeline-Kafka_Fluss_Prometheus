@@ -1,6 +1,6 @@
 ARG REPO_NAME="georgelza"
 
-FROM ${REPO_NAME}/ubuntu-openjdk8:24.04
+FROM ${REPO_NAME}/ubuntu24.04-openjdk8:24.04
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
 

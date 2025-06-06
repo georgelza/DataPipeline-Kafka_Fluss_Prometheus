@@ -10,7 +10,7 @@ CREATE CATALOG hive_catalog WITH (
 
 USE CATALOG hive_catalog;
 
-create database iot;
+create database kafka;
 create database prometheus;
 
 show databases;
