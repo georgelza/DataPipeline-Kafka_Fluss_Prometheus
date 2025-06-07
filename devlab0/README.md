@@ -1,6 +1,6 @@
 ## Environment configuration and deployment
 
-See the master <root>/`README.md` file for the basic downloading of all the containers and library/jar files and building various containers images used and then see the "Run the stack - Example 1" lower down.
+See the master <root>/`README.md` file for the basic downloading of all the containers and library/jar files and building various containers images used and then see the "Run the stack" lower down.
 
 
 ### To test the stack see:  ->  Create Fluss Catalog
@@ -41,9 +41,10 @@ Some of them originate out of the `.env` file, for the Hive environment some ori
 
 You will also find the logging parameter files are specified in the `configs` section and then mapped into the containers in the services.
 
-### Hive site configuration file/AWS S3 credentials for Flink usage.
 
-Take note that the flink images are build with `hive-site.xml` copied it, this file also contains the credentuals for the MinIO S3 environment.
+### Hive site configuration file for Flink usage.
+
+Take note that the flink images are build with `hive-site.xml`.
 
 
 ### PostgreSQL configuration, 
@@ -51,28 +52,47 @@ Take note that the flink images are build with `hive-site.xml` copied it, this f
 The credentials are sourced from the `.env` file and the start parameters out of `conf/postgresql.conf` & `conf/pg_hba.conf`.
 
 
-
-## Run the stack - Example 1
+## Run the stack
 
 ### Basic last setup steps.
 
-1. `make run`
-
-2. `make ps`        -> until all stable, give is 20-30 seconds.
-
-3. `make deploy`    -> this will kick off a couple of scripts to create the flink catalogs and databases and various flink tables and jobs.
-
-4. `make rp1`       -> this will start the application to generate data for the North based factories, similarly `rp2` will start for the south and `rp3` will be the east based factories.
-
-5. `make source`    -> This will create our various Flink tables configured using the Kafka connector exposing the data via `hive_catalog.iot.<table_name>` table objects.
-
-6. `make targets`    -> This will create our Fluss `fluss_catalog.fluss.*` tables.
+1. cd <root>/devlab0/flink
    
-7. `make inserts`    -> This will start the various inserts of data from our source table objects, namely the Kakfa backed Flink Tables.
-   1. First is the insert into the `fluss_catalog.fluss.*` tables, where we flatten the data. <Fluss currently does not support complex table structures>.
-   2. Next is the insert into the `hive_catalog.prometheus` target **TSDB**, onto which we can then define a **Prometheus datasource** and build **Grafana** dashboards.
+2. make build
+   
+3. cd <root>/devlab0
+   
+4. `make run`
 
-8. `make lakehouse` -> This will start our lakehouse persisting job, which will move our `fluss_catalog.fluss` tables to the **Apache Paimon** based table located on our **HDFS** stack.
+5. `make ps`        -> until all stable, give is 20-30 seconds.
+
+6. `make deploy`    -> this will kick off a couple of scripts to create the flink catalogs and databases and various flink tables and jobs.
+
+   1. `make source`    -> This will create our various Flink tables configured using the Kafka connector exposing the data via `hive_catalog.kafka.<table_name>` table objects.
+
+   2. `make targets`    -> This will create our Fluss `fluss_catalog.fluss.*` tables and our prometheus output `hive_catalog.prometheus.*`
+      
+   3. `make inserts`    -> This will start the various inserts of data from our source table objects, namely the Kakfa backed Flink Tables.
+      
+      1. First is the insert into the `fluss_catalog.fluss.*` tables, where we flatten the data. <Fluss currently does not support complex table structures>.
+      
+      2. Next is the insert into the `hive_catalog.prometheus` target **TSDB**, onto which we can then define a **Prometheus datasource** and build **Grafana** dashboards.
+
+7. `cd <root>`
+   
+8. `python3 -m venv ./venv`
+   
+9. `source venv/bin/activate`
+    
+10. `pip install -r requirement`
+    
+11. `cd app_iot1`
+    
+12. `./site1.sh`
+    
+13. open another termnal window and execute steps 9, 11 and 12 for `app_iot2` and similar for `app_iot3`
+    
+14. `make lakehouse` -> This will start our lakehouse persisting job, which will move our `fluss_catalog.fluss` tables to the **Apache Paimon** based table located on our **HDFS** stack.
 
 
 ### Our Data Generator's.

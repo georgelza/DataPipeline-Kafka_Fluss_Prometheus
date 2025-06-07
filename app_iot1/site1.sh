@@ -11,6 +11,7 @@ export KAFKA_MODE=1
 export KAFKA_BATCH_SIZE=1000
 
 
+
 # Debug Levels:
 # 0 Debug       -> Allot of information will be printed, including printing site configuration to logfile.
 # 1 Info        -> We just printing that processes is starting/ending

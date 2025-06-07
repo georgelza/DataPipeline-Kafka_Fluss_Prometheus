@@ -1,5 +1,5 @@
 
-FROM python:3.12-bookworm
+FROM python:3.13-bookworm
 
 USER root:root
 
@@ -7,11 +7,13 @@ WORKDIR /app
 RUN mkdir logs
 RUN mkdir conf
 
-COPY requirements .
-RUN pip install --upgrade pip
-RUN pip install -r requirements
+COPY ../requirements .
 
 COPY *.py .
+COPY .pws .
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements
 
 LABEL Author="George Leonard (georgelza@gmail.com)"
 

@@ -36,7 +36,6 @@ help:
 .PHONY: help
 
 
-
 buildapp:
 	cd ../app_iot1; make build
 
@@ -51,7 +50,6 @@ run:
 		prometheus grafana  \
 		 --remove-orphans 
 #		namenode resourcemanager historyserver nodemanager1 datanode1 datanode2 datanode3 datanode4 datanode5 \
-#		minio mc 
  
 deploy: createtopics createcat source targets inserts
 

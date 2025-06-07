@@ -416,7 +416,7 @@ services:
 # configuration file
 # The "security" related paramters are contained in the .env file
   iot1:
-    image: georgelza/iot_datagen:3.2
+    image: georgelza/iot_datagen:3.3
     hostname: iot1
     container_name: iot1
     environment:
@@ -439,7 +439,7 @@ services:
       - ../app_iot1/logs/:/app/logs
 
   iot2:
-    image: georgelza/iot_datagen:3.2
+    image: georgelza/iot_datagen:3.3
     hostname: iot2
     container_name: iot2
     environment:
@@ -462,7 +462,7 @@ services:
       - ../app_iot2/logs/:/app/logs
 
   iot3:
-    image: georgelza/iot_datagen:3.2
+    image: georgelza/iot_datagen:3.3
     hostname: iot3
     container_name: iot3
     environment:

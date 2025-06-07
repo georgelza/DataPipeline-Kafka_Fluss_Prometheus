@@ -1,8 +1,8 @@
 .DEFAULT_GOAL := help
-include ../devlab/.env
+include ../devlab0/.env
 
 IMAGE_NAME=iot_datagen
-VERSION=3.2
+VERSION=3.3
 
 define HELP
 
