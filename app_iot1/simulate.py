@@ -358,13 +358,6 @@ def run_simulation(site, current_time, config_params):
                 historic_data_start_datetime = site["historic_data_start_datetime"]
             ))
             
-            # Do we want to output the record to a OpenMetrics Historical file
-            if config_params["OPENMETRICSENABLED"] == 1:
-                # Lets open the file
-                openmetricsfile = connection.createFileConnection(config_params, str(site["siteId"]), logger)
-            
-            #end if
-            
             while oldest_time < current_time:
                 oldest_time += timedelta(milliseconds=site["sleeptime"])    
     
